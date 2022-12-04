@@ -1,19 +1,18 @@
 use std::fs;
 
 fn main() {
-    let contents = fs::read_to_string("input.txt").expect("Should have read the file");
-    let split:Vec<&str> = contents.split("\n\n").collect();
-    let mut max = 0;
-    for elf in split {
-        let sum:i32 = elf
-            .split("\n")
-            .filter(|s| !s.is_empty())
-            .map(|s| s.parse::<i32>().unwrap())
-            .sum();
-        if sum > max {
-            max = sum
-        }
-    }
+    part1() 
+}
 
-    println!("{max}");
+fn part1() {
+    let contents = fs::read_to_string("input.txt").expect("Should have read the file");
+
+    let max = contents
+        .split("\n\n")
+        .map(|x| {
+            x.split("\n").flat_map(|x| x.parse::<u32>()).sum::<u32>()
+        })
+        .max();
+
+    println!("{:?}", max);
 }
