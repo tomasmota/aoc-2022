@@ -1,6 +1,4 @@
-// const INPUT: &str = include_str!("../input.txt");
-
-// use std::str::Split;
+const INPUT: &str = include_str!("../input.txt");
 
 use std::ops::Range;
 
@@ -9,34 +7,31 @@ fn main() {
 }
 
 fn part1() {
-    let input = "71-71,42-72";
+    let sum = INPUT.lines().fold(0, |accum, x| {
+        let n = x
+            .split(",")
+            .map(|x| {
+                let mut split = x.split("-").map(|x| x.parse::<i32>().unwrap());
+                return Range {
+                    start: split.next().unwrap(),
+                    end: split.next().unwrap(),
+                };
+            })
+            .collect::<Vec<Range<i32>>>();
 
-    let pair = input.split(",").collect::<Vec<&str>>();
+        let left = n.get(0).unwrap();
+        let right = n.get(1).unwrap();
+        if contained(left, right) {
+            return accum + 1;
+        }
 
-    let nested = pair
-        .into_iter()
-        .map(|x| x.split("-").collect::<Vec<&str>>());
+        return accum;
+    });
 
-    // println!("{:?}", nested.collect::<Vec<Vec<&str>>>())
+    println!("{}", sum);
+}
 
-    let ranges: Vec<Range<i32>> = nested
-        .map(|pair| Range::<i32> {
-            start: pair[0].parse::<i32>().unwrap(),
-            end: pair[1].parse::<i32>().unwrap(),
-        })
-        .collect();
-
-    let g1 = &ranges[0];
-    &ranges[1].all(|x| g1.contains(&x));
-
-    println!("{:?}", g1);
-    println!("{:?}", ranges);
-    // let mapped = split.into_iter().map(|x| {
-    //     let y = x.split("-").into_iter().map(|x| x.parse::<i32>());
-    //
-    //     println!("{:?}", y);
-    //     println!("{}", x);
-    //     (x, x)
-    // });
-    // println!("{:?}", mapped.collect::<Vec<(&str, &str)>>())
+fn contained(left: &Range<i32>, right: &Range<i32>) -> bool {
+    return (left.start <= right.start && left.end >= right.end)
+        || (left.start >= right.start && left.end <= right.end);
 }
