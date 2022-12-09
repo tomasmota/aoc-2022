@@ -29,10 +29,40 @@ fn part1() {
     for line in start_lines.into_iter().rev() {
         for i in (1..34).step_by(4) {
             let letter = line.chars().nth(i).expect("exists");
-            let position = (i + 3) / 4;
-            deck.get_mut(&position).unwrap().push(letter)
+            if !letter.is_whitespace() {
+                let position = (i + 3) / 4;
+                deck.get_mut(&position).unwrap().push(letter)
+            }
         }
     }
 
     // Iterate over movements
+    for line in INPUT.lines().skip(10) {
+        let mut sections = line
+            .split_whitespace()
+            .filter_map(|x| x.parse::<u32>().ok());
+        let amount = sections.next().expect("exists");
+        let from_nr = sections.next().expect("exists");
+        let to_nr = sections.next().expect("exists");
+        println!("{} from {} to {}", amount, from_nr, to_nr);
+
+        for _ in 0..amount {
+            let from = deck.get_mut(&(from_nr as usize)).expect("exists");
+            let letter = from.pop();
+            // println!("{}", letter.expect("asd"));
+            let to = deck.get_mut(&(to_nr as usize)).expect("exists");
+            to.push(letter.expect("we have the letter"));
+        }
+    }
+
+    // Get top crates
+    let mut res: Vec<char> = Vec::new();
+    for (_, mut stack) in deck.drain() {
+        res.push(stack.pop().expect("popped a number"));
+        match stack.pop() {
+            Some(letter) => print!("{}", letter),
+            None => (),
+        }
+    }
+    println!()
 }
